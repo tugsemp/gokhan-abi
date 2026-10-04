@@ -652,6 +652,10 @@
             .map(function (a) { return { ad: a.ad, slug: a.slug, sira: a.sira }; })
         };
       });
+      // menüde kategoriler ve alt kategoriler alfabetik sıralanır
+      function adaGore(x, y) { return x.ad.localeCompare(y.ad, 'tr'); }
+      DATA.kategoriler.sort(adaGore);
+      DATA.kategoriler.forEach(function (k) { k.alt.sort(adaGore); });
       var hepsi = r[2].map(satirdanUrun);
       DATA.urunler = hepsi.filter(function (u) { return !u.silindi; });
       DATA.silinen = hepsi.filter(function (u) { return u.silindi; });
