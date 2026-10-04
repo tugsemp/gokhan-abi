@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Ürün Kataloğu</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="#/"><span class="brand-mark">◆</span><span id="brandName">Ürün Kataloğu</span></a>
+  <form class="search" id="searchForm" role="search">
+    <input id="q" type="search" placeholder="Ürün adı, kodu veya barkod ara…" autocomplete="off">
+  </form>
+  <a class="top-link" href="#/yonetim">Yönetim</a>
+  <a class="top-link" href="#" id="cikis">Çıkış</a>
+  <a class="cart-btn" href="#/liste">Listem <span class="badge" id="cartCount">0</span></a>
+</header>
+
+<main id="app"></main>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="kurallar.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+# Alış fiyatı / tedarikçi içeren yerel veriler ve gizli anahtarlar depoya girmez
+*.xlsx
+katalog.db
+katalog/data.js
+katalog/img/
+.env
+__pycache__/
