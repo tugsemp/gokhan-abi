@@ -481,6 +481,7 @@
     app.innerHTML = '<div class="pf-layout">' +
       '<aside class="pf-form no-print">' +
       '<h1>Proforma Fatura</h1>' +
+      '<button class="btn ghost full" id="yeniUrunBtn">＋ Listede olmayan ürün ekle</button>' +
       '<fieldset><legend>Belge</legend>' +
       '<label>Proforma no<input data-g="pf" data-f="no" value="' + esc(pf.no) + '"></label>' +
       '<div class="two"><label>Tarih<input type="date" data-g="pf" data-f="tarih" value="' + pf.tarih + '"></label>' +
@@ -604,6 +605,30 @@
         drawDoc();
       };
     });
+    // katalogda olmayan ürün: pencerede girilir, veritabanına kaydedilir ve proformaya eklenir
+    document.getElementById('yeniUrunBtn').onclick = function () {
+      var d = document.createElement('dialog');
+      d.className = 'dlg genis';
+      d.innerHTML = urunFormu(null) + '<button type="button" class="dlg-x" aria-label="Kapat">×</button>';
+      document.body.appendChild(d);
+      d.querySelector('h2').textContent = 'Yeni ürün ekle';
+      d.querySelector('.form-acts').insertAdjacentHTML('afterbegin',
+        '<label class="adet-l">Adet<input name="adet" type="number" min="1" value="1" inputmode="numeric"></label>');
+      d.querySelector('.form-acts').insertAdjacentHTML('beforeend',
+        '<p class="muted">Ürün kataloğa kaydedilir ve bu proformaya eklenir.</p>');
+      function kapat() { d.close(); d.remove(); }
+      d.querySelector('.dlg-x').onclick = kapat;
+      d.addEventListener('cancel', function () { d.remove(); });
+      var form = d.querySelector('form');
+      urunFormuBagla(null, function (yeni) {
+        cart.push({ id: yeni.id, adet: Math.max(1, parseInt(form.adet.value, 10) || 1) });
+        saveCart();
+        kapat();
+        toast('Ürün kataloğa ve proformaya eklendi');
+        viewProforma();
+      });
+      d.showModal();
+    };
     document.getElementById('printBtn').onclick = function () {
       var old = document.title;
       document.title = pf.no + (pf.musteri.ad ? ' - ' + pf.musteri.ad : '');
@@ -761,7 +786,8 @@
       '<div class="form-acts"><button class="btn" type="submit">' + (u ? 'Değişiklikleri kaydet' : 'Ürünü ekle') + '</button>' +
       (u ? '<a class="btn ghost" href="#/urun/' + u.id + '">Vazgeç</a>' : '') + '</div></form>';
   }
-  function urunFormuBagla(u) {
+  // sonra(urun): verilirse kayıttan sonra sayfa yenilenmez, yeni ürün bu işleve geçirilir
+  function urunFormuBagla(u, sonra) {
     var form = document.getElementById('urunForm');
     var mevcut = u ? u.img.slice() : [], yeni = [], hazir = Promise.resolve();
     var box = document.getElementById('previews');
@@ -805,8 +831,14 @@
         };
         return u
           ? sb.from('urunler').update(satir).eq('id', u.id).then(hata).then(function () { return u.id; })
-          : sb.from('urunler').insert(satir).select('id').single().then(hata).then(function (d) { return d.id; });
-      }).then(function (id) { yenile('#/urun/' + id); })
+          : sb.from('urunler').insert(satir).select('*').single().then(hata).then(function (d) {
+            if (!sonra) return d.id;
+            var yeniUrun = satirdanUrun(d);
+            DATA.urunler.push(yeniUrun);
+            indexle();
+            sonra(yeniUrun);
+          });
+      }).then(function (id) { if (id != null) yenile('#/urun/' + id); })
         .catch(function (err) {
           btn.disabled = false;
           btn.textContent = u ? 'Değişiklikleri kaydet' : 'Ürünü ekle';

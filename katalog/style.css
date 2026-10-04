@@ -228,6 +228,15 @@ legend small { font-weight: 400; color: var(--muted); }
 .backup .btn { margin: 0; cursor: pointer; }
 .kdvsel { width: 62px; text-align: right; cursor: pointer; }
 
+/* ---------- proformada yeni ürün penceresi */
+.btn.full { display: block; width: 100%; margin-bottom: 14px; }
+.dlg.genis { width: min(560px, 94vw); max-height: 92vh; overflow: auto; padding: 0; }
+.dlg.genis .panel { border: 0; border-radius: 0; }
+.dlg-x { position: absolute; top: 10px; right: 12px; border: 0; background: none; font-size: 26px; line-height: 1; color: var(--muted); cursor: pointer; }
+.adet-l { margin: 0 !important; display: flex !important; align-items: center; gap: 8px; }
+.adet-l input { width: 70px !important; margin: 0 !important; }
+.form-acts .muted { flex-basis: 100%; margin: 0; }
+
 /* ---------- giriş */
 html:not([data-giris]) .top .search, html:not([data-giris]) .top-link, html:not([data-giris]) .cart-btn { display: none; }
 .login { max-width: 380px; margin: 60px auto; }
